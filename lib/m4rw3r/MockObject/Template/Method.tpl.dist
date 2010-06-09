@@ -1,0 +1,4 @@
+	{visibility} function {name}({parameter_list})
+	{
+		return $this->___recorder->handleMethodCall('{name}', \m4rw3r\MockObject\Util::getParameters());
+	}

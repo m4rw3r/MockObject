@@ -23,13 +23,15 @@ class Method
 	/**
 	 * Creates a new mock-method factory.
 	 * 
+	 * @param  \m4rw3r\MockObject\Factory
 	 * @param  string|ReflectionMethod
 	 */
 	function __construct(Factory $parent, $ref)
 	{
 		$this->parent = $parent;
 		
-		if($ref instanceof ReflectionMethod)
+		// Have no idea why $ref instanceof ReflectionMethod doesn't work...
+		if(is_object($ref) && get_class($ref) === 'ReflectionMethod')
 		{
 			// TODO: Check final, and skip them with a warning
 			$this->name       = $ref->getName();
@@ -44,7 +46,7 @@ class Method
 		}
 		else
 		{
-			throw new \UnexpectedArgumentException(sprintf('Expected string or ReflectionMethod, received "%s"', gettype($ref) == 'object' ? get_class($ref) : gettype($ref)));
+			throw new \InvalidArgumentException(sprintf('Expected string or ReflectionMethod, received "%s"', gettype($ref) == 'object' ? get_class($ref) : gettype($ref)));
 		}
 	}
 	
@@ -99,6 +101,34 @@ class Method
 	public function getVisibility()
 	{
 		return $this->visibility;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if this mock-method is a static method.
+	 * 
+	 * @return boolean
+	 */
+	public function isStatic()
+	{
+		return $this->is_static;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Renders the mocked-method code.
+	 * 
+	 * @return string
+	 */
+	public function generateCode()
+	{
+		return Util::renderTemplate($this->isStatic() ? 'StaticMethod' : 'Method', array(
+			'visibility'     => $this->getVisibility(),
+			'name'           => $this->getName(),
+			'parameter_list' => '&$arr' // TODO: Dummy, replace with proper code
+			));
 	}
 	
 	// ------------------------------------------------------------------------

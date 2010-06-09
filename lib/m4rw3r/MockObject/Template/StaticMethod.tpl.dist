@@ -1,0 +1,4 @@
+	{visibility} static function {name}({parameter_list})
+	{
+		return self::$___srecorder->handleMethodCall('{name}', \m4rw3r\MockObject\Util::getParameters());
+	}
