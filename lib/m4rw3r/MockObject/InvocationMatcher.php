@@ -8,11 +8,15 @@
 namespace m4rw3r\MockObject;
 
 /**
- * 
+ * Class matching method calls and validates against expectations.
  */
 class InvocationMatcher implements InvocationMatcherInterface
 {
-	
+	/**
+	 * A list of parameter matchers, null if it doesn't matter which parameters at all.
+	 * 
+	 * @var array(InvocationMatcher\ParameterInterface)
+	 */
 	protected $parameter_matchers = null;
 	
 	/**
@@ -32,9 +36,12 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a new invocation matcher for the method $m and using the counter
+	 * $count.
 	 * 
-	 * 
-	 * @return 
+	 * @param  \m4rw3r\MockObject\Method
+	 * @param  \m4rw3r\MockObject\InvocationMatcher\CountInterface
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function __construct(Method $m, InvocationMatcher\CountInterface $count)
 	{
@@ -45,9 +52,12 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Tells which parameters to match in the call, all are made according to position,
+	 * default is that they are matched by value.
 	 * 
-	 * 
-	 * @return 
+	 * @param  mixed|\m4rw3r\MockObject\InvocationMatcher\ParameterInterface
+	 * @param  ...
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function with()
 	{
@@ -71,9 +81,11 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Alias for with().
 	 * 
-	 * 
-	 * @return 
+	 * @param  mixed
+	 * @param  ...
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function withParameters()
 	{
@@ -83,9 +95,9 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Tells the invocation matcher that it should match a call without parameters.
 	 * 
-	 * 
-	 * @return 
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function withNoParameters()
 	{
@@ -97,9 +109,11 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Tells what this invocation matcher should use to generate the return value
+	 * in case an invocation matches.
 	 * 
-	 * 
-	 * @return 
+	 * @param  \m4rw3r\MockObject\ResponderInterface
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function andReturn(ResponderInterface $response)
 	{
@@ -111,9 +125,11 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Tells this invocation matcher that it should return the supplied value
+	 * if the invocation matches.
 	 * 
-	 * 
-	 * @return 
+	 * @param  mixed
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function andReturnValue($value)
 	{
@@ -123,21 +139,25 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Tells this invocation matcher that it should return the response from a
+	 * callback if the invocation matches.
 	 * 
-	 * 
-	 * @return 
+	 * @param  callback|Closure
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function andReturnCallback($callback)
 	{
-		return $this->andReturn(new Responder\Callback($value));
+		return $this->andReturn(new Responder\Callback($callback));
 	}
 	
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Tells this invocation matcher that it only should be invoked before the
+	 * $matcher invocation matcher has been invoked satisfactory.
 	 * 
-	 * 
-	 * @return 
+	 * @param  \m4rw3r\MockObject\InvocationMatcherInterface
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function before(InvocationMatcherInterface $matcher)
 	{
@@ -162,9 +182,11 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Tells this invocation matcher that it only should be invoked after the
+	 * $matcher invocation matcher has been invoked satisfactory.
 	 * 
-	 * 
-	 * @return 
+	 * @param  \m4rw3r\MockObject\InvocationMatcherInterface
+	 * @return \m4rw3r\MockObject\InvocationMatcherInterface
 	 */
 	public function after(InvocationMatcherInterface $matcher)
 	{
@@ -191,6 +213,7 @@ class InvocationMatcher implements InvocationMatcherInterface
 	/**
 	 * Returns true if this invocation matcher matches the supplied method.
 	 * 
+	 * @param  string
 	 * @return boolean
 	 */
 	public function matchesMethod($method_name)
@@ -248,6 +271,7 @@ class InvocationMatcher implements InvocationMatcherInterface
 	 * Returns true if the parameter list satisfies the parameter matchers of
 	 * this object.
 	 * 
+	 * @param  array
 	 * @return boolean
 	 */
 	public function matchesParameters(array $parameter_list)
@@ -266,6 +290,7 @@ class InvocationMatcher implements InvocationMatcherInterface
 			}
 		}
 		
+		// Make sure that the list is not empty, if that is the case, then we have too many parameters
 		return empty($parameter_list);
 	}
 	
@@ -328,9 +353,10 @@ class InvocationMatcher implements InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the string representation of this invocation matcher, human readable
+	 * to easier see what has failed.
 	 * 
-	 * 
-	 * @return 
+	 * @return string
 	 */
 	public function __toString()
 	{
