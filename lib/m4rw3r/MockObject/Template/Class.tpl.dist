@@ -16,5 +16,5 @@ class {classname}{extends}{implements}
 		self::$___srecorder = $rec;
 	}
 	
-	{methods}
+{methods}
 }

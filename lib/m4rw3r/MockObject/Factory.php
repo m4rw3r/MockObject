@@ -132,12 +132,12 @@ class Factory implements RecorderInterface
 	 */
 	public function __construct($class_name = null,
 	                            array $methods = null,
-	                            array $interfaces = array())
+	                            $interfaces = array())
 	{
 		$this->class = $class_name;
-		$this->interfaces = $interfaces;
+		$this->interfaces = (Array) $interfaces;
 		
-		foreach($interfaces as $i)
+		foreach($this->interfaces as $i)
 		{
 			if(interface_exists($i))
 			{
@@ -227,42 +227,39 @@ class Factory implements RecorderInterface
 	{
 		if(is_null($this->mock_class))
 		{
-			if(is_null($this->class))
+			$method_code = array();
+			foreach($this->methods as $m)
 			{
-				// No specific class, use the generic one:
-				$this->mock_class = '\\m4rw3r\\MockObject\\RecordingObject';
+				$method_code[] = $m->generateCode();
 			}
-			else
+			
+			$method_code = implode("\n\n", $method_code);
+			
+			// Template data except classname, as it is not yet known
+			$tdata = array(
+				'namespace'  => '', // TODO: Dummy, Add proper code
+				'extends'    => empty($this->class) ? '' : ' extends '.$this->class,
+				'implements' => empty($this->interfaces) ? '' : ' implements '.implode(', ', $this->interfaces),
+				'methods'    => $method_code
+				);
+			
+			// Create mock class name
+			$this->mock_class = $c = $this->class.'_'.sha1(serialize($tdata));
+			
+			// Do we already have this class?
+			if( ! class_exists($this->mock_class, false))
 			{
-				$method_code = array();
-				foreach($this->methods as $m)
-				{
-					$method_code[] = $m->generateCode();
-				}
-				
-				$method_code = implode("\n\n", $method_code);
-				
-				// Template data except classname, as it is not yet known
-				$tdata = array(
-					'namespace'  => '', // TODO: Dummy, Add proper code
-					'extends'    => empty($this->class) ? '' : ' extends '.$this->class,
-					'implements' => empty($this->interfaces) ? '' : ' implements '.implode(', ', $this->interfaces),
-					'methods'    => $method_code
-					);
-				
-				// Create mock class name
-				$this->mock_class = $c = $this->class.'_'.sha1(serialize($tdata));
-				
+				// No, render the class and eval it
 				$tdata['classname'] = $c;
 				
 				// Generate code
 				$code = Util::renderTemplate('Class', $tdata);
 				
 				eval($code);
-				
-				// Set the recorder for static methods
-				$c::___setStaticRecorder($this);
 			}
+			
+			// Set the recorder for static methods
+			$c::___setStaticRecorder($this);
 		}
 		
 		return $this->mock_class;
