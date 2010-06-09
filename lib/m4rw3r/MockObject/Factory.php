@@ -157,10 +157,20 @@ class Factory implements RecorderInterface
 		{
 			$ref = new \ReflectionClass($class_name);
 			
+			if($ref->isFinal())
+			{
+				throw new \RuntimeException(sprintf('The class "%s" is marked as final, it cannot be mocked.', $class_name));
+			}
+			
 			foreach($ref->getMethods() as $method)
 			{
 				if(is_null($methods) OR in_array($method->getName(), $methods))
 				{
+					if($method->isFinal())
+					{
+						throw new \RuntimeException(sprintf('The method "%s" is marked as final, it cannot be mocked.', $class_name.'::'.$method->getName()));
+					}
+					
 					$this->methods[$method->getName()] = new Method($this, $method);
 				}
 			}
