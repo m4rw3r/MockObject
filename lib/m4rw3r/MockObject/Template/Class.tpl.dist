@@ -1,0 +1,20 @@
+{namespace}
+
+class {classname}{extends}{implements}
+{
+	private $___recorder;
+	
+	public function ___setRecorder(\m4rw3r\MockObject\RecorderInterface $rec)
+	{
+		$this->___recorder = $rec;
+	}
+	
+	private static $___srecorder;
+	
+	public function ___setStaticRecorder(\m4rw3r\MockObject\RecorderInterface $rec)
+	{
+		self::$___srecorder = $rec;
+	}
+	
+	{methods}
+}

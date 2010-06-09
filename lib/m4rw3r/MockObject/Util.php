@@ -22,12 +22,18 @@ class Util
 	 */
 	public static function renderTemplate($name, array $replaces)
 	{
-		if( ! file_exists(__DIR__.'/Templates/'.$name.'.tpl.dist'))
+		if( ! file_exists(__DIR__.'/Template/'.$name.'.tpl.dist'))
 		{
-			throw new \Exception(sprintf('The template file named "%s.tpl.dist" cannot be found in "%s/Templates/".', $name, __DIR__));
+			throw new \Exception(sprintf('The template file named "%s.tpl.dist" cannot be found in "%s/Template/".', $name, __DIR__));
 		}
 		
-		// TODO: Code
+		$a = array();
+		foreach(array_keys($replaces) as $k)
+		{
+			$a[] = '{'.$k.'}';
+		}
+		
+		return str_replace($a, array_values($replaces), file_get_contents(__DIR__.'/Template/'.$name.'.tpl.dist'));
 	}
 	
 	// ------------------------------------------------------------------------
