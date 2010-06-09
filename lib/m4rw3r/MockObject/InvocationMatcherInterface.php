@@ -44,6 +44,16 @@ interface InvocationMatcherInterface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns true if the parameter list satisfies the parameter matchers of
+	 * this object.
+	 * 
+	 * @return boolean
+	 */
+	public function matchesParameters(array $parameter_list);
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Tells this invocation matcher that an invocation has been made matching it
 	 * and if a responder is present, it should return it.
 	 * 
@@ -60,6 +70,16 @@ interface InvocationMatcherInterface
 	 * @return boolean
 	 */
 	public function hasResponder();
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Should return true if this invocation matcher is satisfied with all the
+	 * invoke()'d calls it has received so far.
+	 * 
+	 * @return boolean
+	 */
+	public function validateCalls();
 }
 
 
