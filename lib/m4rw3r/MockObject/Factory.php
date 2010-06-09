@@ -147,7 +147,7 @@ class Factory implements RecorderInterface
 				{
 					if(is_null($methods) OR in_array($method->getName(), $methods))
 					{
-						$this->methods[$ref->getName()] = new Method($ref, $this);
+						$this->methods[$method->getName()] = new Method($this, $method);
 					}
 				}
 			}
@@ -161,7 +161,7 @@ class Factory implements RecorderInterface
 			{
 				if(is_null($methods) OR in_array($method->getName(), $methods))
 				{
-					$this->methods[$ref->getName()] = new Method($ref, $this);
+					$this->methods[$method->getName()] = new Method($this, $method);
 				}
 			}
 		}
@@ -177,7 +177,10 @@ class Factory implements RecorderInterface
 	 */
 	public function addMethod($name)
 	{
-		$this->methods[$name] = new Method($this, $name);
+		if( ! isset($this->methods[$name]))
+		{
+			$this->methods[$name] = new Method($this, $name);
+		}
 		
 		return $this->methods[$name];
 	}
