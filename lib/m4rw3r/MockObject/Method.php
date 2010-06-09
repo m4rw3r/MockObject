@@ -20,6 +20,8 @@ class Method
 	
 	protected $parent;
 	
+	protected $parameters = array();
+	
 	/**
 	 * Creates a new mock-method factory.
 	 * 
@@ -33,12 +35,14 @@ class Method
 		// Have no idea why $ref instanceof ReflectionMethod doesn't work...
 		if(is_object($ref) && get_class($ref) === 'ReflectionMethod')
 		{
-			// TODO: Check final, and skip them with a warning
 			$this->name       = $ref->getName();
 			$this->visibility = $ref->isPublic() ? 'public' : ($ref->isProtected() ? 'protected' : 'private');
 			$this->is_static  = $ref->isStatic();
 			
-			// TODO: Handle parameter list
+			foreach($ref->getParameters() as $param)
+			{
+				$this->parameters[] = new Method\Parameter($param);
+			}
 		}
 		elseif(is_string($ref))
 		{
@@ -127,7 +131,7 @@ class Method
 		return Util::renderTemplate($this->isStatic() ? 'StaticMethod' : 'Method', array(
 			'visibility'     => $this->getVisibility(),
 			'name'           => $this->getName(),
-			'parameter_list' => '&$arr' // TODO: Dummy, replace with proper code
+			'parameter_list' => implode(', ', $this->parameters)
 			));
 	}
 	
